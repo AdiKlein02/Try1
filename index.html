@@ -1,1 +1,1023 @@
+```html
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מערכת ניתוח נתונים מתקדמת | מבית היוצר של עדי</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Heebo', 'Rubik', sans-serif;
+            background: #0a0a1a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        .hero-bg {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 25%, #0d1b2a 50%, #1b2838 75%, #0a0a1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(99, 179, 237, 0.6);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Glowing orbs */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: orbFloat 8s ease-in-out infinite;
+        }
+
+        .glow-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #4299e1, transparent);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .glow-orb-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #9f7aea, transparent);
+            bottom: -50px;
+            left: -50px;
+            animation-delay: -3s;
+        }
+
+        .glow-orb-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #4fd1c5, transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -6s;
+        }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 10px) scale(1.05); }
+        }
+
+        /* Glassmorphism card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(66, 153, 225, 0.15);
+        }
+
+        /* Animated border */
+        .animated-border {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .animated-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #4299e1, #9f7aea, #4fd1c5, #4299e1);
+            background-size: 300% 300%;
+            animation: borderGlow 4s ease infinite;
+            border-radius: 26px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .animated-border:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Scroll reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* Icon container */
+        .icon-glow {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            transition: all 0.4s ease;
+        }
+
+        .icon-glow:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .icon-blue { background: linear-gradient(135deg, #4299e1, #3182ce); box-shadow: 0 8px 30px rgba(66, 153, 225, 0.3); }
+        .icon-purple { background: linear-gradient(135deg, #9f7aea, #805ad5); box-shadow: 0 8px 30px rgba(159, 122, 234, 0.3); }
+        .icon-teal { background: linear-gradient(135deg, #4fd1c5, #38b2ac); box-shadow: 0 8px 30px rgba(79, 209, 197, 0.3); }
+        .icon-pink { background: linear-gradient(135deg, #f687b3, #d53f8c); box-shadow: 0 8px 30px rgba(246, 135, 179, 0.3); }
+
+        /* Tableau container */
+        .tableau-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tableau-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4299e1, #9f7aea, #4fd1c5, transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Stats counter */
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #4299e1, #9f7aea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Button styles */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .btn-glow:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(66, 153, 225, 0.4);
+        }
+
+        /* Navigation */
+        .nav-glass {
+            background: rgba(10, 10, 26, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4299e1, #9f7aea);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Divider */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(66, 153, 225, 0.3), rgba(159, 122, 234, 0.3), transparent);
+        }
+
+        /* Loading animation for Tableau */
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(66, 153, 225, 0.1);
+            border-top-color: #4299e1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .stat-number { font-size: 2rem; }
+            .icon-glow { width: 55px; height: 55px; font-size: 24px; }
+        }
+
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4299e1, #9f7aea);
+            border-radius: 4px;
+        }
+
+        /* Hero text animation */
+        .hero-title {
+            animation: fadeInUp 1s ease forwards;
+            opacity: 0;
+        }
+
+        .hero-subtitle {
+            animation: fadeInUp 1s ease 0.3s forwards;
+            opacity: 0;
+        }
+
+        .hero-cta {
+            animation: fadeInUp 1s ease 0.6s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Pulse animation */
+        .pulse-dot {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        /* Feature list */
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+        }
+
+        .feature-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Footer wave */
+        .wave-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wave-container svg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        /* Tag styles */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: rgba(66, 153, 225, 0.1);
+            border: 1px solid rgba(66, 153, 225, 0.2);
+            color: #63b3ed;
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(66, 153, 225, 0.2);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav-glass fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                    א
+                </div>
+                <span class="text-xl font-bold bg-gradient-to-l from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    אנליטיקה חכמה
+                </span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#about" class="nav-link text-sm text-gray-300 hover:text-white">אודות</a>
+                <a href="#dashboard" class="nav-link text-sm text-gray-300 hover:text-white">התרשים</a>
+                <a href="#benefits" class="nav-link text-sm text-gray-300 hover:text-white">יתרונות</a>
+                <a href="#credits" class="nav-link text-sm text-gray-300 hover:text-white">קרדיט</a>
+            </div>
+            <a href="#dashboard" class="btn-glow px-6 py-2.5 bg-gradient-to-l from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium">
+                לצפייה בתרשים ←
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center justify-center relative pt-20">
+        <!-- Background effects -->
+        <div class="glow-orb glow-orb-1"></div>
+        <div class="glow-orb glow-orb-2"></div>
+        <div class="glow-orb glow-orb-3"></div>
+        <div class="particles" id="particles"></div>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <!-- Badge -->
+            <div class="hero-title inline-flex items-center gap-2 mb-8">
+                <span class="pulse-dot w-2 h-2 rounded-full bg-green-400"></span>
+                <span class="tag">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    מערכת ויזואליזציה מתקדמת
+                </span>
+            </div>
+
+            <!-- Title -->
+            <h1 class="hero-title text-5xl md:text-7xl font-black leading-tight mb-6">
+                <span class="bg-gradient-to-l from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent">
+                    ניתוח נתונים
+                </span>
+                <br>
+                <span class="text-white">
+                    שמספר את הסיפור
+                </span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="hero-subtitle text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
+                מערכת אינטראקטיבית לויזואליזציה של נתונים מורכבים, המאפשרת גילוי תובנות עמוקות
+                <span class="text-blue-400 font-medium">במבט אחד</span> —
+                הכלים של Tableau מביאים את הנתונים לחיים
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="hero-cta flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#dashboard" class="btn-glow px-8 py-4 bg-gradient-to-l from-blue-600 to-purple-600 text-white rounded-2xl text-lg font-bold flex items-center gap-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    חקור את התרשים
+                </a>
+                <a href="#about" class="px-8 py-4 border border-white/10 text-gray-300 rounded-2xl text-lg font-medium hover:bg-white/5 hover:border-white/20 transition-all duration-300 flex items-center gap-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    למידע נוסף
+                </a>
+            </div>
+
+            <!-- Scroll indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="relative py-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="reveal glass-card p-6 text-center">
+                    <div class="stat-number" data-target="100">0</div>
+                    <div class="text-gray-400 text-sm mt-2">אחוזי דיוק</div>
+                </div>
+                <div class="reveal reveal-delay-1 glass-card p-6 text-center">
+                    <div class="stat-number" data-target="24">0</div>
+                    <div class="text-gray-400 text-sm mt-2">שעות תפעול</div>
+                </div>
+                <div class="reveal reveal-delay-2 glass-card p-6 text-center">
+                    <div class="stat-number" data-target="5">0</div>
+                    <div class="text-gray-400 text-sm mt-2">מדדים מרכזיים</div>
+                </div>
+                <div class="reveal reveal-delay-3 glass-card p-6 text-center">
+                    <div class="stat-number" data-target="1">0</div>
+                    <div class="text-gray-400 text-sm mt-2">דשבורד מאוחד</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 relative">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <span class="tag mb-4 inline-flex">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    מהות המערכת
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-6 mb-6">
+                    <span class="bg-gradient-to-l from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        כוחו של ניתוח חזותי
+                    </span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-3xl mx-auto leading-relaxed">
+                    מערכת הוויזואליזציה הזו נבנתה בעזרת Tableau Public — פלטפורמה מובילה עולמית לניתוח והצגת נתונים.
+                    המערכת ממירה נתונים גולמיים לתובנות ויזואליות ברורות, המאפשרות קבלת החלטות מהירה ומדויקת.
+                    כל תרשים בדשבורד מספר סיפור אחר, יחד הם יוצרים תמונה שלמה וברורה.
+                </p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Feature 1 -->
+                <div class="reveal glass-card animated-border p-8">
+                    <div class="icon-glow icon-blue mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">ויזואליזציה מתקדמת</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        תרשימים אינטראקטיביים המאפשרים חקירה עצמאית של הנתונים ברמת פירוט גבוהה
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="reveal reveal-delay-1 glass-card animated-border p-8">
+                    <div class="icon-glow icon-purple mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">ניתוח מגמות</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        זיהוי דפוסים ומגמות בנתונים המאפשרים חיזוי והבנה עמוקה יותר של התהליכים
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="reveal reveal-delay-2 glass-card animated-border p-8">
+                    <div class="icon-glow icon-teal mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">סינון דינמי</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        יכולת סינון ופילוח נתונים בזמן אמת לקבלת תשובות מדויקות לכל שאלה
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="reveal reveal-delay-3 glass-card animated-border p-8">
+                    <div class="icon-glow icon-pink mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">אמינות ודיוק</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        נתונים מדויקים ומעודכנים המוצגים בצורה אמינה ושקופה לכלל הצופים
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12 reveal">
+                <span class="tag mb-4 inline-flex">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/>
+                    </svg>
+                    הדשבורד המרכזי
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-6 mb-6">
+                    <span class="bg-gradient-to-l from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                        חקור את הנתונים
+                    </span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    השתמשו בסינונים ובפילטרים כדי לחקור את הנתונים לעומק.
+                    לחצו על אלמנטים בתרשים לקבלת תובנות ממוקדות.
+                </p>
+            </div>
+
+            <!-- Tableau Embed -->
+            <div class="reveal">
+                <div class="tableau-wrapper">
+                    <div id="tableauViz" class="w-full" style="min-height: 700px;">
+                        <!-- Loading state -->
+                        <div id="loader" class="flex flex-col items-center justify-center py-32">
+                            <div class="loader mb-6"></div>
+                            <p class="text-gray-400 text-lg">טוען את התרשים...</p>
+                            <p class="text-gray-600 text-sm mt-2">זה עשוי לקחת מספר שניות</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="reveal mt-8 glass-card p-6">
+                <div class="flex items-start gap-4">
+                    <div class="icon-glow icon-blue flex-shrink-0" style="width:50px;height:50px;border-radius:14px;font-size:22px;">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold text-lg mb-2">טיפ לשימוש אופטימלי</h4>
+                        <p class="text-gray-400">
+                            ניתן להשתמש בכלי הסינון המובנים בתרשים Tableau כדי לסנן לפי קטגוריות שונות.
+                            לחצו על כל אלמנט בתרשים כדי להדגיש נתונים רלוונטיים, או השתמשו בלחצן "Explore"
+                            לפתיחת התרשים בחלון מלא עם כל האפשרויות המתקדמות.
+                        </p>
+                        <div class="mt-4 flex flex-wrap gap-3">
+                            <a href="https://public.tableau.com/views/seconddashboard_17780726489030/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank" class="btn-glow px-5 py-2.5 bg-gradient-to-l from-blue-600 to-purple-600 text-white rounded-xl text-sm font-medium flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                                פתח ב-Tableau מלא
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-24 relative">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <span class="tag mb-4 inline-flex">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                    </svg>
+                    יתרונות המערכת
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-6 mb-6">
+                    <span class="bg-gradient-to-l from-teal-400 to-blue-400 bg-clip-text text-transparent">
+                        למה כדאי להשתמש?
+                    </span>
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Benefit 1 -->
+                <div class="reveal glass-card p-8">
+                    <div class="flex items-start gap-5">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 border border-blue-500/20 flex items-center justify-center">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-3">קבלת החלטות מבוססת נתונים</h3>
+                            <p class="text-gray-400 leading-relaxed">
+                                התרשימים מספקים תמונה ברורה ומקיפה המאפשרת קבלת החלטות חכמות ומבוססות עובדות.
+                                במקום להסתמך על אינטואיציה בלבד, הנתונים מדברים בשם עצמם ומספקים בסיס איתן לכל החלטה.
+                            </p>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <span class="tag text-xs">דיוק גבוה</span>
+                                <span class="tag text-xs">שקיפות</span>
+                                <span class="tag text-xs">מהירות</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="reveal reveal-delay-1 glass-card p-8">
+                    <div class="flex items-start gap-5">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/20 flex items-center justify-center">
+                            <span class="text-2xl">📊</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-3">תובנות ויזואליות מידיות</h3>
+                            <p class="text-gray-400 leading-relaxed">
+                                במקום לקרוא טבלאות ארוכות ומשעממות, התרשימים הוויזואליים מאפשרים להבין מגמות ודפוסים
+                                במבט אחד. צבעים, גדלים וצורות מועברים מידע בצורה אינטואיטיבית ונגישה.
+                            </p>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <span class="tag text-xs">ויזואלי</span>
+                                <span class="tag text-xs">אינטואיטיבי</span>
+                                <span class="tag text-xs">מהיר</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="reveal reveal-delay-2 glass-card p-8">
+                    <div class="flex items-start gap-5">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/20 to-teal-600/20 border border-teal-500/20 flex items-center justify-center">
+                            <span class="text-2xl">🔄</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-3">אינטראקטיביות וגמישות</h3>
+                            <p class="text-gray-400 leading-relaxed">
+                                המערכת מאפשרת לכל משתמש לחקור את הנתונים מזוויות שונות. סינונים דינמיים,
+                                drill-down ו-cross-filtering מאפשרים חקירה עצמאית וגילוי תובנות אישיות.
+                            </p>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <span class="tag text-xs">סינון דינמי</span>
+                                <span class="tag text-xs">חקירה עצמאית</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Benefit 4 -->
+                <div class="reveal reveal-delay-3 glass-card p-8">
+                    <div class="flex items-start gap-5">
+                        <div class="flex-shrink-0 w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500/20 to-pink-600/20 border border-pink-500/20 flex items-center justify-center">
+                            <span class="text-2xl">🌐</span>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-3">נגישות מכל מקום</h3>
+                            <p class="text-gray-400 leading-relaxed">
+                                הדשבורד זמין 24/7 מכל מכשיר עם חיבור לאינטרנט. אין צורך בהתקנת תוכנה —
+                                הכל עובד ישירות בדפדפן, כולל טלפונים ניידים וטאבלטים.
+                            </p>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <span class="tag text-xs">ענן</span>
+                                <span class="tag text-xs">ריספונסיבי</span>
+                                <span class="tag text-xs">זמין תמיד</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- Credits Section -->
+    <section id="credits" class="py-24 relative">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="reveal">
+                <span class="tag mb-6 inline-flex">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                    קרדיט
+                </span>
+                <h2 class="text-4xl md:text-5xl font-bold mt-6 mb-8">
+                    <span class="bg-gradient-to-l from-pink-400 to-purple-400 bg-clip-text text-transparent">
+                        נבנה באהבה
+                    </span>
+                </h2>
+
+                <!-- Creator Card -->
+                <div class="glass-card animated-border p-10 max-w-lg mx-auto">
+                    <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 p-1">
+                        <div class="w-full h-full rounded-full bg-gray-900 flex items-center justify-center">
+                            <span class="text-4xl">👩‍💻</span>
+                        </div>
+                    </div>
+                    <h3 class="text-3xl font-bold text-white mb-2">גברת עדי</h3>
+                    <p class="text-purple-400 font-medium mb-4">יוצרת האתר ומפתחת המערכת</p>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        המערכת נבנתה בקפידה ובתשומת לב רבה לפרטים, מתוך אמונה שנתונים צריכים להיות נגישים,
+                        מובנים ויפים. כל פינה באתר עוצבה במחשבה על חוויית המשתמש.
+                    </p>
+                    <div class="flex items-center justify-center gap-4">
+                        <span class="tag">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                            Tableau Public
+                        </span>
+                        <span class="tag">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                            </svg>
+                            HTML & CSS
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Powered by -->
+                <div class="mt-12 text-gray-500 text-sm">
+                    <p>האתר מתארח ב-
+                        <a href="https://pages.github.com/" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors">GitHub Pages</a>
+                        | תרשימים מופעלים באמצעות
+                        <a href="https://public.tableau.com/" target="_blank" class="text-purple-400 hover:text-purple-300 transition-colors">Tableau Public</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative py-12 border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                        א
+                    </div>
+                    <span class="text-gray-400 text-sm">אנליטיקה חכמה © 2025</span>
+                </div>
+                <p class="text-gray-600 text-sm">
+                    נבנה עם 💜 על ידי גברת עדי
+                </p>
+                <div class="flex items-center gap-4">
+                    <a href="#dashboard" class="text-gray-500 hover:text-blue-400 transition-colors text-sm">התרשים</a>
+                    <a href="#about" class="text-gray-500 hover:text-blue-400 transition-colors text-sm">אודות</a>
+                    <a href="#credits" class="text-gray-500 hover:text-blue-400 transition-colors text-sm">קרדיט</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // =====================
+        // Tableau Viz Embed
+        // =====================
+        function initTableauViz() {
+            var vizContainer = document.getElementById('tableauViz');
+            var loaderElement = document.getElementById('loader');
+            var tableauUrl = 'https://public.tableau.com/views/seconddashboard_17780726489030/Dashboard1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link';
+
+            var options = {
+                width: '100%',
+                height: '800px',
+                hideTabs: false,
+                hideToolbar: false,
+                onFirstInteractive: function () {
+                    if (loaderElement) {
+                        loaderElement.style.display = 'none';
+                    }
+                }
+            };
+
+            var viz = new tableau.Viz(vizContainer, tableauUrl, options);
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initTableauViz);
+        } else {
+            initTableauViz();
+        }
+
+        // =====================
+        // Particles
+        // =====================
+        function createParticles() {
+            var container = document.getElementById('particles');
+            var particleCount = 30;
+
+            for (var i = 0; i < particleCount; i++) {
+                var p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+                p.style.animationDelay = (Math.random() * 10) + 's';
+                p.style.width = (Math.random() * 4 + 2) + 'px';
+                p.style.height = p.style.width;
+
+                var colors = [
+                    'rgba(66, 153, 225, 0.5)',
+                    'rgba(159, 122, 234, 0.5)',
+                    'rgba(79, 209, 197, 0.5)',
+                    'rgba(246, 135, 179, 0.3)'
+                ];
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // =====================
+        // Scroll Reveal
+        // =====================
+        function handleScrollReveal() {
+            var reveals = document.querySelectorAll('.reveal');
+            var windowHeight = window.innerHeight;
+
+            reveals.forEach(function(el) {
+                var elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('visible');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', handleScrollReveal);
+        window.addEventListener('load', handleScrollReveal);
+
+        // =====================
+        // Counter Animation
+        // =====================
+        function animateCounters() {
+            var counters = document.querySelectorAll('.stat-number');
+            counters.forEach(function(counter) {
+                var target = parseInt(counter.getAttribute('data-target'));
+                var duration = 2000;
+                var startTime = null;
+                var started = false;
+
+                function updateCounter(timestamp) {
+                    if (!started) {
+                        var rect = counter.getBoundingClientRect();
+                        if (rect.top < window.innerHeight && rect.bottom > 0) {
+                            started = true;
+                            startTime = timestamp;
+                        } else {
+                            return;
+                        }
+                    }
+
+                    var elapsed = timestamp - startTime;
+                    var progress = Math.min(elapsed / duration, 1);
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    var current = Math.floor(eased * target);
+
+                    counter.textContent = current + (target === 100 ? '%' : target === 1 ? '' : '+');
+
+                    if (progress < 1) {
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target + (target === 100 ? '%' : '');
+                    }
+                }
+
+                requestAnimationFrame(updateCounter);
+            });
+        }
+
+        window.addEventListener('scroll', animateCounters);
+        window.addEventListener('load', animateCounters);
+
+        // =====================
+        // Navbar scroll effect
+        // =====================
+        var navbar = document.getElementById('navbar');
+        var lastScroll = 0;
+
+        window.addEventListener('scroll', function() {
+            var currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.style.padding = '0.5rem 0';
+                navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,0.3)';
+            } else {
+                navbar.style.padding = '1rem 0';
+                navbar.style.boxShadow = 'none';
+            }
+
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+</html>
+```
