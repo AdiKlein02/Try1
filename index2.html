@@ -1,1 +1,218 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>מיזוג נתוני מניות - Yahoo Finance</title>
 
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white flex items-center justify-center p-6">
+
+  <main class="w-full max-w-2xl bg-slate-900/90 rounded-3xl shadow-2xl p-8 border border-slate-700">
+
+    <h1 class="text-3xl font-bold text-center mb-3">
+      מיזוג נתוני מניות
+    </h1>
+
+    <p class="text-center text-slate-300 mb-8">
+      הזיני סימולי מניות, תאריכים ותדירות — והמערכת תיצור עבורך קובץ Google Sheets מאוחד.
+    </p>
+
+    <form id="stockForm" class="space-y-5">
+
+      <div>
+        <label for="tickers" class="block mb-2 font-semibold">
+          סימולי מניות
+        </label>
+
+        <input
+          id="tickers"
+          type="text"
+          placeholder="לדוגמה: AAPL, AMZN, TSLA"
+          class="w-full p-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
+        />
+
+        <p class="text-sm text-slate-400 mt-2">
+          הפרידי בין הסימולים באמצעות פסיק.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div>
+          <label for="startDate" class="block mb-2 font-semibold">
+            תאריך התחלה
+          </label>
+
+          <input
+            id="startDate"
+            type="date"
+            class="w-full p-3 rounded-xl bg-slate-800 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        <div>
+          <label for="endDate" class="block mb-2 font-semibold">
+            תאריך סיום
+          </label>
+
+          <input
+            id="endDate"
+            type="date"
+            class="w-full p-3 rounded-xl bg-slate-800 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+      </div>
+
+      <div>
+        <label for="frequency" class="block mb-2 font-semibold">
+          תדירות
+        </label>
+
+        <select
+          id="frequency"
+          class="w-full p-3 rounded-xl bg-slate-800 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="1d">Daily - יומי</option>
+          <option value="1wk">Weekly - שבועי</option>
+          <option value="1mo">Monthly - חודשי</option>
+        </select>
+      </div>
+
+      <button
+        type="submit"
+        id="submitBtn"
+        class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 disabled:cursor-not-allowed transition rounded-xl p-3 font-bold text-lg shadow-lg"
+      >
+        יצירת גיליון מאוחד
+      </button>
+
+    </form>
+
+    <div id="loading" class="hidden mt-6 text-center bg-yellow-900/30 border border-yellow-500 rounded-xl p-4 text-yellow-200">
+      טוען נתונים... נא להמתין
+    </div>
+
+    <div id="result" class="hidden mt-6 bg-green-900/30 border border-green-500 rounded-xl p-5 text-center">
+      <p class="mb-3 font-bold text-green-200">
+        הגיליון נוצר בהצלחה!
+      </p>
+
+      <a
+        id="sheetLink"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block bg-green-600 hover:bg-green-700 transition px-5 py-2 rounded-lg font-bold"
+      >
+        פתיחת Google Sheets
+      </a>
+    </div>
+
+    <div id="error" class="hidden mt-6 bg-red-900/30 border border-red-500 rounded-xl p-4 text-center text-red-200"></div>
+
+  </main>
+
+  <script>
+    // כתובת ה-Web App שלך מ-Google Apps Script
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby4HeA_PaW0ZezG9AZuM5hyPlaujls8yXdgb44yTGE/dev";
+
+    const form = document.getElementById("stockForm");
+    const loading = document.getElementById("loading");
+    const result = document.getElementById("result");
+    const errorBox = document.getElementById("error");
+    const sheetLink = document.getElementById("sheetLink");
+    const submitBtn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      result.classList.add("hidden");
+      errorBox.classList.add("hidden");
+      loading.classList.remove("hidden");
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "מעבד נתונים...";
+
+      const tickersInput = document.getElementById("tickers").value.trim();
+
+      const tickers = tickersInput
+        .split(",")
+        .map(ticker => ticker.trim().toUpperCase())
+        .filter(ticker => ticker !== "");
+
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+      const frequency = document.getElementById("frequency").value;
+
+      if (tickers.length === 0) {
+        showError("יש להזין לפחות סימול מניה אחד.");
+        resetButton();
+        return;
+      }
+
+      if (!startDate || !endDate) {
+        showError("יש לבחור תאריך התחלה ותאריך סיום.");
+        resetButton();
+        return;
+      }
+
+      if (new Date(startDate) > new Date(endDate)) {
+        showError("תאריך ההתחלה לא יכול להיות אחרי תאריך הסיום.");
+        resetButton();
+        return;
+      }
+
+      const data = {
+        tickers: tickers,
+        startDate: startDate,
+        endDate: endDate,
+        frequency: frequency
+      };
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const json = await response.json();
+
+        if (json.sheetUrl) {
+          sheetLink.href = json.sheetUrl;
+          result.classList.remove("hidden");
+        } else {
+          throw new Error(json.error || "אירעה שגיאה לא ידועה.");
+        }
+
+      } catch (error) {
+        showError("שגיאה: " + error.message);
+      } finally {
+        loading.classList.add("hidden");
+        resetButton();
+      }
+    });
+
+    function showError(message) {
+      loading.classList.add("hidden");
+      errorBox.textContent = message;
+      errorBox.classList.remove("hidden");
+    }
+
+    function resetButton() {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "יצירת גיליון מאוחד";
+    }
+  </script>
+
+</body>
+</html>
